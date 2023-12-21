@@ -1,0 +1,3 @@
+Scaffold-DbContext "Server=BEARBATTLESHIP;Database=LucraTechnicalTest;Trusted_Connection=True;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -Force -NoOnConfiguring -Schema dbo -Context ImageDataContext -ContextDir Context -OutputDir Models
+
+Scaffold-DbContext "Server=BEARBATTLESHIP;Database=LucraTechnicalTest;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -ContextDir Datacontext -Context ImagePortalDataContext  -OutputDir Models
