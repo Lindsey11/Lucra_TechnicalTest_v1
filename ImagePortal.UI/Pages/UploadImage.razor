@@ -1,0 +1,98 @@
+﻿@page "/image-upload"
+@using System.IO
+@using Microsoft.AspNetCore.Components.Forms
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <EditForm Model="@imageUploadModel" OnValidSubmit="@HandleValidSubmit" class="p-4 border rounded">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <label for="title" class="form-label">Image Title:</label>
+                    <InputText id="title" class="form-control" @bind-Value="imageUploadModel.Title" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Image Description:</label>
+                    <InputTextArea id="description" class="form-control" @bind-Value="imageUploadModel.Description" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="tags" class="form-label">Image Tags (comma-separated):</label>
+                    <InputText id="tags" class="form-control" @bind-Value="imageUploadModel.Tags" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="categories" class="form-label">Categories:</label>
+                    <InputText id="categories" class="form-control" @bind-Value="imageUploadModel.Categories" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="image" class="form-label">Select Image:</label>
+                    <InputFile id="image" class="form-control" OnChange="@HandleFileSelected" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Upload Image</button>
+            </EditForm>
+        </div>
+    </div>
+
+    @if (uploadedImage != null)
+    {
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-6">
+                <img src="@uploadedImage" class="img-fluid" />
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private ImageUploadModel imageUploadModel = new ImageUploadModel();
+    private string uploadedImage;
+    [Inject]
+    private IImagePortalAPIClient _apiClient { get; set; }
+
+    private async Task HandleValidSubmit()
+    {
+        await _apiClient.UploadImage(imageUploadModel);
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var imageFile = e.File;
+        string[] permittedExtensions = { ".jpg", ".jpeg", ".png" };
+        var extension = Path.GetExtension(imageFile.Name).ToLowerInvariant();
+        if (!permittedExtensions.Contains(extension))
+        {
+            return;
+        }
+
+        long maxFileSize = 5 * 1024 * 1024; // limit the image to be maxim of 5mb
+        if (imageFile.Size > maxFileSize)
+        {
+            return;
+        }
+
+        if (imageFile != null)
+        {
+            //set image preview
+            var format = imageFile.ContentType;
+            var resizedImage = await imageFile.RequestImageFileAsync(format, 640, 480);
+            using var ms = new MemoryStream();
+            await resizedImage.OpenReadStream().CopyToAsync(ms);
+            uploadedImage = $"data:{format};base64,{Convert.ToBase64String(ms.ToArray())}";
+
+
+            using var stream = imageFile.OpenReadStream();
+            byte[] fileBytes = new byte[imageFile.Size];
+            await stream.ReadAsync(fileBytes);
+            imageUploadModel.ImageData = fileBytes;
+            imageUploadModel.FileType = extension.Replace(".","");
+        }
+    }
+
+   
+}

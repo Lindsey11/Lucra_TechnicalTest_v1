@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImagePortal.DataAccess", "I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImagePortal.Services", "ImagePortal.Services\ImagePortal.Services.csproj", "{A05C04DA-B911-43C8-A27E-FC1C7ADF8D59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImagePortal.UI", "ImagePortal.UI\ImagePortal.UI.csproj", "{9CA77992-0404-4887-BEBA-5EBEDE1E9063}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImagePortal.UI", "ImagePortal.UI\ImagePortal.UI.csproj", "{9CA77992-0404-4887-BEBA-5EBEDE1E9063}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

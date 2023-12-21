@@ -1,4 +1,5 @@
 ﻿using ImagePortal.Services.ViewModels;
+using Microsoft.EntityFrameworkCore.Update.Internal;
 using Microsoft.Extensions.Configuration;
 using RestSharp;
 using RestSharp.Authenticators;
@@ -49,6 +50,61 @@ namespace ImagePortal.Services.UIServices.APIClient
                 throw;
             }
          
+        }
+
+        public async Task<bool> UploadImage(ImageUploadModel upload)
+        {
+            try
+            {
+                var options = new RestClientOptions(_configuration["API:URL"]);
+                {
+                    //Authenticator = new HttpBasicAuthenticator("username", "password")
+                };
+                var client = new RestClient(options);
+                var request = new RestRequest("image/add-new-image", Method.Post);
+
+                var requestModel = new ImageDataViewModel()
+                {
+                    Title = upload.Title,
+                    Description = upload.Description,
+                    FileType = upload.FileType,
+                    ImageData = upload.ImageData,
+                    ImageId = 0
+
+                };
+
+                if (!string.IsNullOrEmpty(upload.Tags))
+                {
+                    var tags = new List<ImageTags>();
+                    foreach (var tag in upload.Tags.Split(","))
+                    {
+                        tags.Add(new ImageTags()
+                        {
+                            TagName = tag,
+                        });
+                    }
+
+                    var tagsJson = JsonSerializer.Serialize(tags);
+                    requestModel.HasMetaData = true;
+                    requestModel.ImageMetaDataViewModel = new()
+                    {
+                        Tags = tagsJson,
+                        Categories = upload.Categories,
+                        ImageMetaDataId = 0
+                    };
+                }
+
+                var body = JsonSerializer.Serialize(requestModel);
+                request.AddParameter("application/json", body, ParameterType.RequestBody);
+
+                var response = await client.PostAsync(request);
+
+                return true;
+            }
+            catch (Exception error)
+            {
+                throw;
+            }
         }
     }
 }

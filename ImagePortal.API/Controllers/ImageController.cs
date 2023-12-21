@@ -66,13 +66,12 @@ namespace ImagePortal.API.Controllers
         [HttpPost("add-new-image")]
         [ProducesResponseType(typeof(APIServiceResponseModel<bool>), 200)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult> CreateNewImage([FromForm] ImageDataViewModel request)
+        public async Task<ActionResult> CreateNewImage([FromBody] ImageDataViewModel request)
         {
             try
             {
 
-                request.ImageData = await ExtractByteArray(request.file);
-
+                //request.ImageData = await ExtractByteArray(request.file);
                 var res = await _imageService.CreateNewImage(request);
                 return Ok(res);
             }
@@ -90,7 +89,6 @@ namespace ImagePortal.API.Controllers
             try
             {
 
-               
                 var res = await _imageService.UpdateImage(request);
                 return Ok(res);
             }

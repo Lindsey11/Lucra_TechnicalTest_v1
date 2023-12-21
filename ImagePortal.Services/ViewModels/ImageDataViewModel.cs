@@ -19,7 +19,7 @@ namespace ImagePortal.Services.ViewModels
         public byte[]? ImageData { get; set; }
         public string? ImageUrl { get; set; }
         public string FileType { get; set; } = null!;
-        public IFormFile? file { get; set; }
+       // public IFormFile? file { get; set; }
       
     }
 }

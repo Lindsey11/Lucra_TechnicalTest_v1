@@ -10,5 +10,6 @@ namespace ImagePortal.Services.UIServices.APIClient
     public interface IImagePortalAPIClient
     {
         Task<UIServiceResponseModel> GetImages(int pageNumber, int pageSize);
+        Task<bool> UploadImage(ImageUploadModel upload);
     }
 }
