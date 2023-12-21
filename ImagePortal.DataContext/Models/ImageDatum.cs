@@ -12,6 +12,7 @@ public partial class ImageDatum
     public string Description { get; set; } = null!;
 
     public byte[] Data { get; set; }
+    public string Base64URL { get; set; }
 
     public string FileType { get; set; } = null!;
 

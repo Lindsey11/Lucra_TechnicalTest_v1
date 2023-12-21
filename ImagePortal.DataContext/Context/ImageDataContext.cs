@@ -26,6 +26,7 @@ public partial class ImageDataContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.Description).IsUnicode(false);
+            entity.Property(e => e.Base64URL).IsUnicode(false);
             entity.Property(e => e.FileType)
                 .HasMaxLength(10)
                 .IsFixedLength();

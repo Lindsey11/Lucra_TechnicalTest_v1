@@ -1,7 +1,12 @@
 ﻿
 
 
-@if (!IsLoadding)
+
+@if(Images.Count() == 0)
+{
+    <p>No data found</p>
+}
+else if (!IsLoadding)
 {
     <div class="row">
         @foreach(var item in Images)

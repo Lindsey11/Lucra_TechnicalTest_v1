@@ -9,7 +9,7 @@ namespace ImagePortal.UI.Components
     {
         [Inject]
         private IImagePortalAPIClient _apiClient { get; set; }
-        public List<UIImageDataViewModel> Images { get; set; }
+        public List<UIImageDataViewModel> Images { get; set; } = new List<UIImageDataViewModel>();
         public bool IsLoadding { get; set; }
         protected override async Task OnInitializedAsync()
         {
@@ -23,13 +23,6 @@ namespace ImagePortal.UI.Components
                 IsLoadding = true;
                 var data = await _apiClient.GetImages(1, 10);
 
-                foreach (var image in data.data)
-                {
-                    var convertImage = ConvertToBase64(image.imageData, image.fileType);
-
-                    image.imageUrl = convertImage;
-                }
-
                 Images = data.data;
 
                 IsLoadding = false;
@@ -40,9 +33,6 @@ namespace ImagePortal.UI.Components
             }
         }
 
-        private string ConvertToBase64(byte[] imageBytes, string fileType)
-        {
-            return $"data:image/{fileType};base64,{Convert.ToBase64String(imageBytes)}";
-        }
+       
     }
 }

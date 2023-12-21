@@ -28,7 +28,8 @@ namespace ImagePortal.Services.ApiServices
                     DateCreated = DateTime.Now,
                     Description = request.Description,
                     FileType = request.FileType,
-                    Title = request.Title
+                    Title = request.Title,
+                    Base64URL = ConvertToBase64(request.ImageData,request.FileType)
                 };
 
                 var newImageId = await _imageRepo.CreateAsync(newImage);
@@ -90,7 +91,8 @@ namespace ImagePortal.Services.ApiServices
                         FileType = image.FileType,
                         ImageData = image.Data,
                         ImageId = image.ImageId,
-                        Title = image.Title
+                        Title = image.Title,
+                        ImageUrl = image.Base64URL
                     };
 
                     if(image.ImageMetaData is not null)
@@ -134,7 +136,8 @@ namespace ImagePortal.Services.ApiServices
                         FileType = image.FileType,
                         ImageData = image.Data,
                         ImageId = image.ImageId,
-                        Title = image.Title
+                        Title = image.Title,
+                        ImageUrl = image.Base64URL
                     };
 
                     if (image.ImageMetaData is not null)
@@ -229,6 +232,11 @@ namespace ImagePortal.Services.ApiServices
         public Task<APIServiceResponseModel<bool>> UpdateMetaData(ImageMetaDataViewModel imageMetaDataViewModel)
         {
             throw new NotImplementedException();
+        }
+
+        private string ConvertToBase64(byte[] imageBytes, string fileType)
+        {
+            return $"data:image/{fileType};base64,{Convert.ToBase64String(imageBytes)}";
         }
     }
 }

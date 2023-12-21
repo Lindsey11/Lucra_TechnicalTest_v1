@@ -73,7 +73,6 @@ namespace ImagePortal.API.Controllers
 
                 request.ImageData = await ExtractByteArray(request.file);
 
-
                 var res = await _imageService.CreateNewImage(request);
                 return Ok(res);
             }
