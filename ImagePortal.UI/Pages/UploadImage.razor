@@ -31,15 +31,31 @@
 
                 <div class="mb-3">
                     <label for="image" class="form-label">Select Image:</label>
-                    <InputFile id="image" class="form-control" OnChange="@HandleFileSelected" />
+                    <InputFile id="image" class="form-control" OnChange="@HandleFileSelected" accept=".png,.jpeg,.jpg" />
                 </div>
 
-                <button type="submit" class="btn btn-primary">Upload Image</button>
+
+                @if (uploadReady)
+                {
+                    <button type="submit" class="btn btn-primary">Upload Image</button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-primary" disabled>Upload Image</button>
+                }
+               
+                
             </EditForm>
         </div>
     </div>
 
-    @if (uploadedImage != null)
+    @if (LoadingPreview)
+    {
+      
+        <p>Loading preview</p>
+     
+    }
+    else
     {
         <div class="row justify-content-center mt-4">
             <div class="col-md-6">
@@ -47,51 +63,101 @@
             </div>
         </div>
     }
+
+    @if (string.IsNullOrEmpty(uploadedImage) && !LoadingPreview)
+    {
+        <p>No image selected</p>
+    }
+
 </div>
 
+
+<CustomDialog @ref="dialog"></CustomDialog>
+
 @code {
-    private ImageUploadModel imageUploadModel = new ImageUploadModel();
-    private string uploadedImage;
+    private ImageUploadModel imageUploadModel { get; set; } = new ImageUploadModel();
+    private string uploadedImage { get; set; }
+    public bool uploadReady { get; set; }
     [Inject]
     private IImagePortalAPIClient _apiClient { get; set; }
-
+    [Inject]
+    private NavigationManager navigationManager { get; set; }
+    private CustomDialog dialog { get; set; }
+    public bool LoadingPreview {get; set;}
     private async Task HandleValidSubmit()
     {
-        await _apiClient.UploadImage(imageUploadModel);
+
+        if (imageUploadModel.ImageData.Length != 0)
+        {
+            var res = await _apiClient.UploadImage(imageUploadModel);
+
+            //if the image was upload successfully lets move the user back to the home page
+            if (res)
+            {
+
+                navigationManager.NavigateTo("/");
+            }
+        }
+        else
+        {
+            dialog.Show("Error", "Image failed to upload correctly", false);
+        }
+
+
     }
 
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
-        var imageFile = e.File;
-        string[] permittedExtensions = { ".jpg", ".jpeg", ".png" };
-        var extension = Path.GetExtension(imageFile.Name).ToLowerInvariant();
-        if (!permittedExtensions.Contains(extension))
+        try
         {
-            return;
-        }
+            LoadingPreview = true;
+            var imageFile = e.File;
+            string[] permittedExtensions = { ".jpg", ".jpeg", ".png" };// image can only be of this file extention type
+            var extension = Path.GetExtension(imageFile.Name).ToLowerInvariant();
+            if (!permittedExtensions.Contains(extension))
+            {
+                dialog.Show("Error", "This file format is not supported", false);
+                LoadingPreview = false;
+                return;
+            }
 
-        long maxFileSize = 5 * 1024 * 1024; // limit the image to be maxim of 5mb
-        if (imageFile.Size > maxFileSize)
+            long maxFileSize = 1 * 1024 * 1024; // limit the image to be maxim of 2mb
+            if (imageFile.Size > maxFileSize)
+            {
+                dialog.Show("Error", "A maximum file size of 2MB is allowed", false);
+                LoadingPreview = false;
+                return;
+            }
+
+            if (imageFile != null)
+            {
+                //set image preview
+                var format = imageFile.ContentType;
+                var resizedImage = await imageFile.RequestImageFileAsync(format, 640, 480);
+                using var ms = new MemoryStream();
+                await resizedImage.OpenReadStream().CopyToAsync(ms);
+                uploadedImage = $"data:{format};base64,{Convert.ToBase64String(ms.ToArray())}";
+
+
+                using var stream = imageFile.OpenReadStream();
+                byte[] fileBytes = new byte[imageFile.Size];
+                await stream.ReadAsync(fileBytes);
+                imageUploadModel.ImageData = fileBytes;
+                imageUploadModel.FileType = extension.Replace(".", "");
+                uploadReady = true;
+           
+            }
+
+            LoadingPreview = false;
+        }
+        catch (Exception error)
         {
-            return;
+            LoadingPreview = false;
+            Console.WriteLine(error.Message);
+            throw;
         }
+       
 
-        if (imageFile != null)
-        {
-            //set image preview
-            var format = imageFile.ContentType;
-            var resizedImage = await imageFile.RequestImageFileAsync(format, 640, 480);
-            using var ms = new MemoryStream();
-            await resizedImage.OpenReadStream().CopyToAsync(ms);
-            uploadedImage = $"data:{format};base64,{Convert.ToBase64String(ms.ToArray())}";
-
-
-            using var stream = imageFile.OpenReadStream();
-            byte[] fileBytes = new byte[imageFile.Size];
-            await stream.ReadAsync(fileBytes);
-            imageUploadModel.ImageData = fileBytes;
-            imageUploadModel.FileType = extension.Replace(".","");
-        }
     }
 
    

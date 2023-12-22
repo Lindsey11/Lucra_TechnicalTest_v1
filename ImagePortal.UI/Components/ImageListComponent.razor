@@ -5,6 +5,17 @@
 
 @if (!IsLoadding)
 {
+
+    <div class="row">
+        <div class="col-md-12 bg-light" style="max-width:100%; overflow-y: auto">
+            @foreach (var item in tags)
+            {
+                <span class="badge bg-primary" style="margin-left:2px;">@item</span>
+            }
+        </div>
+    </div>
+
+
     <div class="row">
         @foreach(var item in Images)
         {
@@ -22,7 +33,7 @@
 }
 else
 {
-    <p>Loading image...</p>
+    <p>Loading images...</p>
 }
 
 @if (Images.Count() == 0 && !IsLoadding)

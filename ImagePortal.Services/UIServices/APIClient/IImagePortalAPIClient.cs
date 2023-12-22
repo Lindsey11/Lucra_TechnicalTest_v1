@@ -13,5 +13,6 @@ namespace ImagePortal.Services.UIServices.APIClient
         Task<bool> UploadImage(ImageUploadModel upload);
         Task<UIServiceResponseModel<UIImageDataViewModel>> GetImage(int deviceId);
         Task<bool> UpdateImageData(UIImageDataViewModel upload);
+        Task<bool> DeleteImnage(int imageId);
     }
 }

@@ -14,7 +14,7 @@ namespace ImagePortal.Services.ViewModels
 
         public string description { get; set; }
         public bool hasMetaData { get; set; }
-        public ImageMetaDataViewModel? imageMetaDataViewModel { get; set; }
+        public UIImageMetaDataViewModel? imageMetaDataViewModel { get; set; }
         public byte[]? imageData { get; set; }
         public string fileType { get; set; } 
         public string imageUrl { get; set; }

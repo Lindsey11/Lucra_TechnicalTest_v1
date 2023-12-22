@@ -14,7 +14,7 @@ namespace ImagePortal.UI.Pages
         private CustomDialog dialog { get; set; }
 
         [Parameter]
-        public int deviceId { get; set; }
+        public int imageId { get; set; }
         public UIImageDataViewModel ImageDataViewModel { get; set; }
         public bool IsLoading { get; set; }
         protected override async Task OnParametersSetAsync()
@@ -25,7 +25,7 @@ namespace ImagePortal.UI.Pages
         public async Task GetImageDetail()
         {
             IsLoading = true;
-            var Image = await _apiClient.GetImage(deviceId);
+            var Image = await _apiClient.GetImage(imageId);
             if (Image.success)
             {
                 ImageDataViewModel = Image.data;
@@ -52,20 +52,28 @@ namespace ImagePortal.UI.Pages
             else
             {
                 //show error
-                dialog.Show("Delete", "Are you sure you want to delete this image?");
+                dialog.Show("Delete", "Are you sure you want to delete this image?", false);
             }
         }
 
         public async Task Delete()
         {
-            dialog.Show("Delete", "Are you sure you want to delete this image?");
+            dialog.Show("Delete", "Are you sure you want to delete this image?",true);
         }
 
-        private void HandleConfirmation(bool confirmed)
+        private async void HandleConfirmation(bool confirmed)
         {
             if (confirmed)
             {
-                
+                //delete the image
+                var res =await _apiClient.DeleteImnage(imageId);
+
+                if (res)
+                {
+                    //Navigate back home
+                    _navigationManager.NavigateTo("/");
+                }
+
             }
         }
     }

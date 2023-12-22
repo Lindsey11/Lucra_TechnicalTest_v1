@@ -63,15 +63,6 @@ namespace ImagePortal.Services.UIServices.APIClient
                 var client = new RestClient(options);
                 var request = new RestRequest("image/update-image-data", Method.Put);
 
-                //var requestModel = new ImageDataViewModel()
-                //{
-                //    Title = upload.Title,
-                //    Description = upload.Description,
-                //    FileType = upload.FileType,
-                //    ImageData = upload.ImageData,
-                //    ImageId = upload.ImageId
-                //};
-
                 var body = JsonSerializer.Serialize(upload);
                 request.AddParameter("application/json", body, ParameterType.RequestBody);
 
@@ -171,6 +162,36 @@ namespace ImagePortal.Services.UIServices.APIClient
                 else
                 {
                     return new() { messagae = "Error fetching data", success = false };
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        public async Task<bool> DeleteImnage(int imageId)
+        {
+            try
+            {
+                var options = new RestClientOptions(_configuration["API:URL"]);
+                {
+                    //Authenticator = new HttpBasicAuthenticator("username", "password")
+                };
+                var client = new RestClient(options);
+                var request = new RestRequest($"image/delete-image?imageId={imageId}", Method.Delete);
+                
+                var response = await client.DeleteAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                else
+                {
+                   return false;
                 }
             }
             catch (Exception)

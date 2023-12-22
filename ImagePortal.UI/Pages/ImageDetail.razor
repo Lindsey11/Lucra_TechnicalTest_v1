@@ -1,4 +1,4 @@
-﻿@page "/image-detail/{deviceId:int}"
+﻿@page "/image-detail/{imageId:int}"
 
 @if (!IsLoading)
 {
@@ -19,7 +19,7 @@
                         <InputTextArea id="description" class="form-control" @bind-Value="ImageDataViewModel.description" />
                     </div>
 
-                    <button type="button" @onclick="Delete" class="btn btn-primary">Delete</button>
+                    <button type="button" @onclick="Delete" class="btn btn-danger">Delete</button>
                     <button type="submit" class="btn btn-primary">Update Image</button>
                 </EditForm>
             </div>
@@ -36,7 +36,7 @@
 }
 else
 {
-    <p>Fethcing Image Data.....</p>
+    <p>Fetching Image Data.....</p>
 }
 
 <CustomDialog @ref="dialog" OnConfirm="HandleConfirmation"></CustomDialog>
