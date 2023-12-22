@@ -29,7 +29,7 @@ namespace ImagePortal.Services.UIServices.APIClient
                     //Authenticator = new HttpBasicAuthenticator("username", "password")
                 };
                 var client = new RestClient(options);
-                var request = new RestRequest("image/get-all-images-paginated", Method.Get);
+                var request = new RestRequest($"image/get-all-images-paginated?pageNumber={pageNumber}&pageSize={pageSize}", Method.Get);
                 // The cancellation token comes from the caller. You can still make a call without it.
                 var response = await client.GetAsync(request);
 

@@ -14,6 +14,8 @@ namespace ImagePortal.UI.Components
         public List<UIImageDataViewModel> Images { get; set; } = new List<UIImageDataViewModel>();
         public Dictionary<int, string> tags { get; set; } = new Dictionary<int, string>();
         public bool IsLoadding { get; set; }
+        public int pageNumber { get; set; } = 1;
+        public int pageSize { get; set; } = 5;
         protected override async Task OnInitializedAsync()
         {
             await GetImages();
@@ -24,11 +26,11 @@ namespace ImagePortal.UI.Components
             try
             {
                 IsLoadding = true;
-                var data = await _apiClient.GetImages(1, 10);
+                var data = await _apiClient.GetImages(pageNumber, pageSize);
 
                 Images = data.data;
 
-                await BuildListFilerTags(Images);
+                //await BuildListFilerTags(Images);
 
                 IsLoadding = false;
             }
@@ -43,7 +45,7 @@ namespace ImagePortal.UI.Components
         {
             foreach (var image in Images)
             {
-                if(image.imageMetaDataViewModel.tags is not null)
+                if(!string.IsNullOrEmpty(image.imageMetaDataViewModel.tags))
                 {
                     var rawtag = image.imageMetaDataViewModel.tags.Split(",");//JsonSerializer.Deserialize<List<ImageTags>>(image.imageMetaDataViewModel.tags);
                     foreach (var item in rawtag)
@@ -60,9 +62,13 @@ namespace ImagePortal.UI.Components
             }
         }
 
-        public async Task ApplyFilter()
+        public async Task LoadNextBatch()
         {
-
+            pageNumber++;
+            IsLoadding = true;
+                Images = new List<UIImageDataViewModel>();
+                await GetImages();
+            IsLoadding = false;
         }
     }
 }
