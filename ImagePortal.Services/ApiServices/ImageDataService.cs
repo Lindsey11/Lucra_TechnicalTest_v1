@@ -178,6 +178,7 @@ namespace ImagePortal.Services.ApiServices
                     ImageId = singleImage.ImageId,
                     ImageData = singleImage.Data,
                     Title = singleImage.Title,
+                    ImageUrl = singleImage.Base64URL
                 };
 
                 if(singleImage.ImageMetaData is not null)
@@ -206,9 +207,9 @@ namespace ImagePortal.Services.ApiServices
             {
                 var ImageTodata = new ImageDatum()
                 {
-                    Data = requst.ImageData,
+                    //Data = requst.ImageData,
                     Description = requst.Description,
-                    FileType = requst.FileType,
+                    //FileType = requst.FileType,
                     ImageId = requst.ImageId,
                     Title = requst.Title
                 };

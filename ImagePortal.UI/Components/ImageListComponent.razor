@@ -2,21 +2,18 @@
 
 
 
-@if(Images.Count() == 0)
-{
-    <p>No data found</p>
-}
-else if (!IsLoadding)
+
+@if (!IsLoadding)
 {
     <div class="row">
         @foreach(var item in Images)
         {
-            <div class="col-sm-4">
+            <div class="col-sm-4 mt-2">
                 <div class="card" style="width: 18rem;">
                     <img src="@item.imageUrl" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title">@item.title</h5>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                        <a href="/image-detail/@item.imageId" class="btn btn-primary">View Detail</a>
                     </div>
                 </div>
             </div>
@@ -26,6 +23,11 @@ else if (!IsLoadding)
 else
 {
     <p>Loading image...</p>
+}
+
+@if (Images.Count() == 0 && !IsLoadding)
+{
+    <p>No data found</p>
 }
 
 @code {

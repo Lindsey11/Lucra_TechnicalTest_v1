@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace ImagePortal.Services.UIServices
 {
-    public class UIServiceResponseModel
+    public class UIServiceResponseModel<T>
     {
         public string messagae { get; set; } = string.Empty;
         public bool success { get; set; }
-        public List<UIImageDataViewModel> data { get; set; }
+        //public List<UIImageDataViewModel> data { get; set; }
+        public T? data { get; set; }
     }
 }

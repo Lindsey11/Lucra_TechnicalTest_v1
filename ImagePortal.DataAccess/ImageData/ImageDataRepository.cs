@@ -56,7 +56,7 @@ namespace ImagePortal.DataAccess.ImageData
                 if (imageToUpdate is not null) 
                 {
                     imageToUpdate.Description = imageDatum.Description;
-                    imageToUpdate.Data = imageDatum.Data;
+                    //imageToUpdate.Data = imageDatum.Data;
                     imageToUpdate.Title = imageDatum.Title;
 
                     await _context.SaveChangesAsync();

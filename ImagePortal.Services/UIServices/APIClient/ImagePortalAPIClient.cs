@@ -20,7 +20,7 @@ namespace ImagePortal.Services.UIServices.APIClient
         {
             _configuration = configuration;
         }
-        public async  Task<UIServiceResponseModel> GetImages(int pageNumber, int pageSize)
+        public async  Task<UIServiceResponseModel<List<UIImageDataViewModel>>> GetImages(int pageNumber, int pageSize)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace ImagePortal.Services.UIServices.APIClient
                 if (response.IsSuccessStatusCode)
                 {
                     var data = response.Content;
-                    var model = JsonSerializer.Deserialize<UIServiceResponseModel>(data);
+                    var model = JsonSerializer.Deserialize<UIServiceResponseModel<List<UIImageDataViewModel>>>(data);
 
                     return model;
                 }
@@ -50,6 +50,47 @@ namespace ImagePortal.Services.UIServices.APIClient
                 throw;
             }
          
+        }
+
+        public async Task<bool> UpdateImageData(UIImageDataViewModel upload)
+        {
+            try
+            {
+                var options = new RestClientOptions(_configuration["API:URL"]);
+                {
+                    //Authenticator = new HttpBasicAuthenticator("username", "password")
+                };
+                var client = new RestClient(options);
+                var request = new RestRequest("image/update-image-data", Method.Put);
+
+                //var requestModel = new ImageDataViewModel()
+                //{
+                //    Title = upload.Title,
+                //    Description = upload.Description,
+                //    FileType = upload.FileType,
+                //    ImageData = upload.ImageData,
+                //    ImageId = upload.ImageId
+                //};
+
+                var body = JsonSerializer.Serialize(upload);
+                request.AddParameter("application/json", body, ParameterType.RequestBody);
+
+                var response = await client.PutAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch (Exception error)
+            {
+
+                throw;
+            }
         }
 
         public async Task<bool> UploadImage(ImageUploadModel upload)
@@ -103,6 +144,38 @@ namespace ImagePortal.Services.UIServices.APIClient
             }
             catch (Exception error)
             {
+                throw;
+            }
+        }
+
+        public async Task<UIServiceResponseModel<UIImageDataViewModel>> GetImage(int imageId)
+        {
+            try
+            {
+                var options = new RestClientOptions(_configuration["API:URL"]);
+                {
+                    //Authenticator = new HttpBasicAuthenticator("username", "password")
+                };
+                var client = new RestClient(options);
+                var request = new RestRequest($"image/get-single-image?imageId={imageId}", Method.Get);
+                // The cancellation token comes from the caller. You can still make a call without it.
+                var response = await client.GetAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = response.Content;
+                    var model = JsonSerializer.Deserialize<UIServiceResponseModel<UIImageDataViewModel>>(data);
+
+                    return model;
+                }
+                else
+                {
+                    return new() { messagae = "Error fetching data", success = false };
+                }
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }

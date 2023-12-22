@@ -9,7 +9,9 @@ namespace ImagePortal.Services.UIServices.APIClient
 {
     public interface IImagePortalAPIClient
     {
-        Task<UIServiceResponseModel> GetImages(int pageNumber, int pageSize);
+        Task<UIServiceResponseModel<List<UIImageDataViewModel>>> GetImages(int pageNumber, int pageSize);
         Task<bool> UploadImage(ImageUploadModel upload);
+        Task<UIServiceResponseModel<UIImageDataViewModel>> GetImage(int deviceId);
+        Task<bool> UpdateImageData(UIImageDataViewModel upload);
     }
 }

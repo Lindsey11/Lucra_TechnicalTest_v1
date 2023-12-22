@@ -8,6 +8,7 @@ namespace ImagePortal.Services.ViewModels
 {
     public class ImageUploadModel
     {
+        public int ImageId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string Tags { get; set; }

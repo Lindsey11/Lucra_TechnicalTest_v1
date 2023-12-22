@@ -84,11 +84,10 @@ namespace ImagePortal.API.Controllers
         [HttpPut("update-image-data")]
         [ProducesResponseType(typeof(APIServiceResponseModel<bool>), 200)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult> UpdateImage([FromForm] ImageDataViewModel request)
+        public async Task<ActionResult> UpdateImage([FromBody] ImageDataViewModel request)
         {
             try
             {
-
                 var res = await _imageService.UpdateImage(request);
                 return Ok(res);
             }
