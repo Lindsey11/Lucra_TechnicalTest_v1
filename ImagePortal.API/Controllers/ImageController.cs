@@ -38,7 +38,7 @@ namespace ImagePortal.API.Controllers
         {
             try
             {
-                var res = await _imageService.GetAllImageDataPaginated(pageNumber, pageSize);
+                var res = await _imageService.GetAllImageDataPaginated(pageNumber, pageSize, tagFilter);
                 return Ok(res);
             }
             catch (Exception error)

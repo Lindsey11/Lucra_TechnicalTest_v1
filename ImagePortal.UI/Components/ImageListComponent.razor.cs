@@ -12,7 +12,7 @@ namespace ImagePortal.UI.Components
         [Inject]
         private IImagePortalAPIClient _apiClient { get; set; }
         public List<UIImageDataViewModel> Images { get; set; } = new List<UIImageDataViewModel>();
-        public List<string> tags { get; set; } = new List<string>();
+        public Dictionary<int, string> tags { get; set; } = new Dictionary<int, string>();
         public bool IsLoadding { get; set; }
         protected override async Task OnInitializedAsync()
         {
@@ -45,19 +45,24 @@ namespace ImagePortal.UI.Components
             {
                 if(image.imageMetaDataViewModel.tags is not null)
                 {
-                    var rawtag = JsonSerializer.Deserialize<List<ImageTags>>(image.imageMetaDataViewModel.tags);
+                    var rawtag = image.imageMetaDataViewModel.tags.Split(",");//JsonSerializer.Deserialize<List<ImageTags>>(image.imageMetaDataViewModel.tags);
                     foreach (var item in rawtag)
                     {
 
-                        if (!tags.Contains(item.TagName))
+                        if (!tags.ContainsValue(item))
                         {
-                            tags.Add(item.TagName);
+                            tags.Add(image.imageId, item);
                         }
                     }
                 }
             
             
             }
+        }
+
+        public async Task ApplyFilter()
+        {
+
         }
     }
 }

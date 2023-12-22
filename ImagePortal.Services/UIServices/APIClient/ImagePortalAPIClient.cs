@@ -107,20 +107,20 @@ namespace ImagePortal.Services.UIServices.APIClient
 
                 if (!string.IsNullOrEmpty(upload.Tags))
                 {
-                    var tags = new List<ImageTags>();
-                    foreach (var tag in upload.Tags.Split(","))
-                    {
-                        tags.Add(new ImageTags()
-                        {
-                            TagName = tag,
-                        });
-                    }
+                    //var tags = new List<ImageTags>();
+                    //foreach (var tag in upload.Tags.Split(","))
+                    //{
+                    //    tags.Add(new ImageTags()
+                    //    {
+                    //        TagName = tag,
+                    //    });
+                    //}
 
-                    var tagsJson = JsonSerializer.Serialize(tags);
+                    //var tagsJson = JsonSerializer.Serialize(tags);
                     requestModel.HasMetaData = true;
                     requestModel.ImageMetaDataViewModel = new()
                     {
-                        Tags = tagsJson,
+                        Tags = upload.Tags,
                         Categories = upload.Categories,
                         ImageMetaDataId = 0
                     };
