@@ -1,5 +1,7 @@
-﻿using ImagePortal.Services.ViewModels;
+﻿using Azure.Core;
+using ImagePortal.Services.ViewModels;
 using Microsoft.EntityFrameworkCore.Update.Internal;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using RestSharp;
 using RestSharp.Authenticators;
@@ -10,27 +12,31 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ImagePortal.Services.UIServices.APIClient
 {
     public class ImagePortalAPIClient : IImagePortalAPIClient
     {
         private readonly IConfiguration _configuration;
-        public ImagePortalAPIClient(IConfiguration configuration)
+        private readonly IMemoryCache _cache;
+        public ImagePortalAPIClient(IConfiguration configuration, IMemoryCache cache)
         {
             _configuration = configuration;
+            _cache = cache;
         }
         public async  Task<UIServiceResponseModel<List<UIImageDataViewModel>>> GetImages(int pageNumber, int pageSize)
         {
             try
             {
+                var myToken = await GetToken();
+
                 var options = new RestClientOptions(_configuration["API:URL"]);
-                {
-                    //Authenticator = new HttpBasicAuthenticator("username", "password")
-                };
+               
                 var client = new RestClient(options);
                 var request = new RestRequest($"image/get-all-images-paginated?pageNumber={pageNumber}&pageSize={pageSize}", Method.Get);
-                // The cancellation token comes from the caller. You can still make a call without it.
+                request.AddHeader("Authorization", $"Bearer {myToken}");
+                
                 var response = await client.GetAsync(request);
 
                 if (response.IsSuccessStatusCode)
@@ -56,15 +62,14 @@ namespace ImagePortal.Services.UIServices.APIClient
         {
             try
             {
+                var myToken = await GetToken();
                 var options = new RestClientOptions(_configuration["API:URL"]);
-                {
-                    //Authenticator = new HttpBasicAuthenticator("username", "password")
-                };
                 var client = new RestClient(options);
                 var request = new RestRequest("image/update-image-data", Method.Put);
 
                 var body = JsonSerializer.Serialize(upload);
                 request.AddParameter("application/json", body, ParameterType.RequestBody);
+                request.AddHeader("Authorization", $"Bearer {myToken}");
 
                 var response = await client.PutAsync(request);
                 if (response.IsSuccessStatusCode)
@@ -88,10 +93,8 @@ namespace ImagePortal.Services.UIServices.APIClient
         {
             try
             {
+
                 var options = new RestClientOptions(_configuration["API:URL"]);
-                {
-                    //Authenticator = new HttpBasicAuthenticator("username", "password")
-                };
                 var client = new RestClient(options);
                 var request = new RestRequest("image/add-new-image", Method.Post);
 
@@ -107,16 +110,6 @@ namespace ImagePortal.Services.UIServices.APIClient
 
                 if (!string.IsNullOrEmpty(upload.Tags))
                 {
-                    //var tags = new List<ImageTags>();
-                    //foreach (var tag in upload.Tags.Split(","))
-                    //{
-                    //    tags.Add(new ImageTags()
-                    //    {
-                    //        TagName = tag,
-                    //    });
-                    //}
-
-                    //var tagsJson = JsonSerializer.Serialize(tags);
                     requestModel.HasMetaData = true;
                     requestModel.ImageMetaDataViewModel = new()
                     {
@@ -143,13 +136,12 @@ namespace ImagePortal.Services.UIServices.APIClient
         {
             try
             {
+                var myToken = await GetToken();
                 var options = new RestClientOptions(_configuration["API:URL"]);
-                {
-                    //Authenticator = new HttpBasicAuthenticator("username", "password")
-                };
                 var client = new RestClient(options);
                 var request = new RestRequest($"image/get-single-image?imageId={imageId}", Method.Get);
-                // The cancellation token comes from the caller. You can still make a call without it.
+                request.AddHeader("Authorization", $"Bearer {myToken}");
+
                 var response = await client.GetAsync(request);
 
                 if (response.IsSuccessStatusCode)
@@ -176,13 +168,11 @@ namespace ImagePortal.Services.UIServices.APIClient
         {
             try
             {
+                var myToken = await GetToken();
                 var options = new RestClientOptions(_configuration["API:URL"]);
-                {
-                    //Authenticator = new HttpBasicAuthenticator("username", "password")
-                };
                 var client = new RestClient(options);
                 var request = new RestRequest($"image/delete-image?imageId={imageId}", Method.Delete);
-                
+                request.AddHeader("Authorization", $"Bearer {myToken}");
                 var response = await client.DeleteAsync(request);
 
                 if (response.IsSuccessStatusCode)
@@ -200,5 +190,52 @@ namespace ImagePortal.Services.UIServices.APIClient
                 throw;
             }
         }
+
+        private async Task<string> GetToken()
+        {
+            //lets first check if we have a token in cache
+            //var cacheToken = await CheckCacheForToken();
+
+            //if (!string.IsNullOrEmpty(cacheToken))
+            //{
+            //    return cacheToken;
+            //}
+
+            //or else lets just get a new one
+            var options = new RestClientOptions(_configuration["API:URL"]);
+            
+            var client = new RestClient(options);
+            var request = new RestRequest($"token/get-token", Method.Get);
+
+            var response = await client.GetAsync<string>(request);
+            var token = response;
+            return token;
+        }
+
+        private async Task<string> CheckCacheForToken()
+        {
+            var key = "Token";
+            var token = "";
+            if(_cache.TryGetValue(key, out token))
+            {
+                return token;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private async Task SetTokenCache(string token)
+        {
+            var options = new MemoryCacheEntryOptions()
+                                .SetSlidingExpiration(TimeSpan.FromMinutes(10))
+                                .SetAbsoluteExpiration(TimeSpan.FromMinutes(10))
+                                .SetSize(156);
+
+            _cache.Set("Token", token, options);
+        }
+
+        
     }
 }

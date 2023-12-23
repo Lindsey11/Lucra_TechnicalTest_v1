@@ -1,5 +1,6 @@
 ﻿using ImagePortal.Services.ApiServices;
 using ImagePortal.Services.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +32,7 @@ namespace ImagePortal.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("get-all-images-paginated")]
         [ProducesResponseType(typeof(APIServiceResponseModel<List<ImageDataViewModel>>), 200)]
         [ProducesResponseType(400)]
