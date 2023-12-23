@@ -17,6 +17,7 @@ namespace ImagePortal.API.Controllers
         }
 
         [HttpGet("get-all-images")]
+        [Authorize]
         [ProducesResponseType(typeof(APIServiceResponseModel<List<ImageDataViewModel>>),200)]
         [ProducesResponseType(400)]
         public async Task<ActionResult> GetAllImages()
@@ -50,6 +51,7 @@ namespace ImagePortal.API.Controllers
         }
 
         [HttpGet("get-single-image")]
+        [Authorize]
         [ProducesResponseType(typeof(APIServiceResponseModel<ImageDataViewModel>), 200)]
         [ProducesResponseType(400)]
         public async Task<ActionResult> GetSingleImage(int imageId)
@@ -84,6 +86,7 @@ namespace ImagePortal.API.Controllers
         }
 
         [HttpPut("update-image-data")]
+        [Authorize]
         [ProducesResponseType(typeof(APIServiceResponseModel<bool>), 200)]
         [ProducesResponseType(400)]
         public async Task<ActionResult> UpdateImage([FromBody] ImageDataViewModel request)
@@ -116,6 +119,7 @@ namespace ImagePortal.API.Controllers
         }
 
         [HttpDelete("delete-image")]
+        [Authorize]
         [ProducesResponseType(typeof(APIServiceResponseModel<bool>), 200)]
         [ProducesResponseType(400)]
         public async Task<ActionResult> DeleteImage(int imageid)
@@ -131,18 +135,6 @@ namespace ImagePortal.API.Controllers
             }
         }
 
-
-        private async Task<byte[]> ExtractByteArray(IFormFile file)
-        {
-            byte[] fileBytes;
-            using (var memoryStream = new MemoryStream())
-            {
-                await file.CopyToAsync(memoryStream);
-                fileBytes = memoryStream.ToArray();
-            }
-
-            return fileBytes;
-        }
 
         [HttpPost]
         public async Task<IActionResult> Upload(IFormFile file)
