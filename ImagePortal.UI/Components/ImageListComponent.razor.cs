@@ -15,7 +15,7 @@ namespace ImagePortal.UI.Components
         public Dictionary<int, string> tags { get; set; } = new Dictionary<int, string>();
         public bool IsLoadding { get; set; }
         public int pageNumber { get; set; } = 1;
-        public int pageSize { get; set; } = 5;
+        public int pageSize { get; set; } = 8;
         protected override async Task OnInitializedAsync()
         {
             await GetImages();
@@ -68,6 +68,16 @@ namespace ImagePortal.UI.Components
             IsLoadding = true;
                 Images = new List<UIImageDataViewModel>();
                 await GetImages();
+            IsLoadding = false;
+        }
+
+        public async Task LoadPreviousBatch()
+        {
+
+            pageNumber--;
+            IsLoadding = true;
+            Images = new List<UIImageDataViewModel>();
+            await GetImages();
             IsLoadding = false;
         }
     }

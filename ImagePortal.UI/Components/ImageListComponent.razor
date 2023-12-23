@@ -6,7 +6,7 @@
 @if (!IsLoadding)
 {
 
-    <div class="row">
+    <div class="row ">
         <div class="col-md-12 bg-light" style="max-width:100%; overflow-y: auto">
             @foreach (var item in tags)
             {
@@ -19,9 +19,9 @@
     <div class="row">
         @foreach(var item in Images)
         {
-            <div class="col-sm-4 mt-2">
-                <div class="card" style="width: 18rem;">
-                    <img src="@item.imageUrl" class="card-img-top" alt="...">
+            <div class="col-sm-3 mt-2">
+                <div class="card" style="width: 18rem; height: 18rem; min-height: 18rem;">
+                    <img src="@item.imageUrl" class="card-img-top" alt="..." height="160" width="286">
                     <div class="card-body">
                         <h5 class="card-title">@item.title</h5>
                         <a href="/image-detail/@item.imageId" class="btn btn-primary">View Detail</a>
@@ -30,9 +30,17 @@
             </div>
         }
 
-        <button @onclick=LoadNextBatch>Load More</button>
+      
        
     </div>
+
+    <divc class="row justify-content-center mt-4">
+        <div class="col-md-3">
+            <button class="btn btn-warning" @onclick=LoadPreviousBatch>Load More</button>
+            <button class="btn btn-warning" @onclick=LoadNextBatch>Load Previous</button>
+        </div>
+       
+    </divc>
 }
 else
 {
