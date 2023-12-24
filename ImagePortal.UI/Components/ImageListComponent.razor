@@ -6,7 +6,7 @@
 @if (!IsLoadding)
 {
 
-    <div class="row ">
+  @*   <div class="row ">
         <div class="col-md-12 bg-light" style="max-width:100%; overflow-y: auto">
             @foreach (var item in tags)
             {
@@ -14,7 +14,7 @@
             }
         </div>
     </div>
-
+ *@
 
     <div class="row">
         @foreach(var item in Images)
@@ -24,6 +24,14 @@
                     <img src="@item.imageUrl" class="card-img-top" alt="..." height="160" width="286">
                     <div class="card-body">
                         <h5 class="card-title">@item.title</h5>
+
+                        <div>
+                            @foreach(var tag in item.imageMetaDataViewModel.tags.Split(","))
+                            {
+                                <span class="badge bg-primary" style="margin-left:2px;">#@tag</span>
+                            }
+                        </div>
+
                         <a href="/image-detail/@item.imageId" class="btn btn-primary">View Detail</a>
                     </div>
                 </div>
@@ -36,8 +44,8 @@
 
     <divc class="row justify-content-center mt-4">
         <div class="col-md-3">
-            <button class="btn btn-warning" @onclick=LoadPreviousBatch>Load More</button>
-            <button class="btn btn-warning" @onclick=LoadNextBatch>Load Previous</button>
+            <button class="btn btn-warning" @onclick=LoadPreviousBatch>Back</button>
+            <button class="btn btn-warning" @onclick=LoadNextBatch>Next</button>
         </div>
        
     </divc>

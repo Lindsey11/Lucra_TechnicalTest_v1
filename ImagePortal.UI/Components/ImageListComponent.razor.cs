@@ -41,26 +41,26 @@ namespace ImagePortal.UI.Components
             }
         }
 
-       public async Task BuildListFilerTags(List<UIImageDataViewModel> Images)
-        {
-            foreach (var image in Images)
-            {
-                if(!string.IsNullOrEmpty(image.imageMetaDataViewModel.tags))
-                {
-                    var rawtag = image.imageMetaDataViewModel.tags.Split(",");//JsonSerializer.Deserialize<List<ImageTags>>(image.imageMetaDataViewModel.tags);
-                    foreach (var item in rawtag)
-                    {
+       //public async Task BuildListFilerTags(List<UIImageDataViewModel> Images)
+       // {
+       //     foreach (var image in Images)
+       //     {
+       //         if(!string.IsNullOrEmpty(image.imageMetaDataViewModel.tags))
+       //         {
+       //             var rawtag = image.imageMetaDataViewModel.tags.Split(",");//JsonSerializer.Deserialize<List<ImageTags>>(image.imageMetaDataViewModel.tags);
+       //             foreach (var item in rawtag)
+       //             {
 
-                        if (!tags.ContainsValue(item))
-                        {
-                            tags.Add(image.imageId, item);
-                        }
-                    }
-                }
+       //                 if (!tags.ContainsValue(item))
+       //                 {
+       //                     tags.Add(image.imageId, item);
+       //                 }
+       //             }
+       //         }
             
             
-            }
-        }
+       //     }
+       // }
 
         public async Task LoadNextBatch()
         {
