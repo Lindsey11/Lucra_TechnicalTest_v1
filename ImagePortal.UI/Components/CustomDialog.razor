@@ -13,7 +13,11 @@
                     <p>@Message</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" @onclick="Confirm">OK</button>
+                    @if (ShowConfirm)
+                    {
+                        <button type="button" class="btn btn-primary" @onclick="Confirm">OK</button>
+                    }
+                   
                     <button type="button" class="btn btn-secondary" @onclick="Hide">Cancel</button>
                 </div>
             </div>
@@ -27,6 +31,7 @@
     public bool IsVisible { get; private set; }
     public string Title { get; set; }
     public string Message { get; set; }
+    public bool ShowConfirm { get; set; }
     [Parameter] public EventCallback<bool> OnConfirm { get; set; }
 
     public void Show(string title, string message,bool showConfirm)
@@ -34,6 +39,7 @@
         Title = title;
         Message = message;
         IsVisible = true;
+        ShowConfirm = showConfirm;
         StateHasChanged();
     }
 

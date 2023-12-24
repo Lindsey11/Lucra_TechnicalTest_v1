@@ -84,6 +84,7 @@
     private NavigationManager navigationManager { get; set; }
     private CustomDialog dialog { get; set; }
     public bool LoadingPreview {get; set;}
+
     private async Task HandleValidSubmit()
     {
 
@@ -94,7 +95,6 @@
             //if the image was upload successfully lets move the user back to the home page
             if (res)
             {
-
                 navigationManager.NavigateTo("/");
             }
         }
@@ -153,8 +153,7 @@
         catch (Exception error)
         {
             LoadingPreview = false;
-            Console.WriteLine(error.Message);
-            throw;
+            dialog.Show("Error", $"{error.Message}", false);
         }
        
 
